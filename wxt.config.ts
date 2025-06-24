@@ -6,6 +6,10 @@ import path from 'path';
 export default defineConfig({
   srcDir: 'src',
   modules: ['@wxt-dev/module-svelte'],
+  manifest: {
+    host_permissions: ['https://app.todoist.com/*'],
+    permissions: ['identity', 'storage', 'cookies'],
+  },
   vite: (env) => {
     return {
       resolve: {

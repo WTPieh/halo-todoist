@@ -42,15 +42,16 @@
 <script lang="ts">
 	let {
 		class: className,
-		variant = "default",
-		size = "default",
+		variant = 'default',
+		size = 'default',
 		ref = $bindable(null),
 		href = undefined,
-		type = "button",
+		type = 'button',
 		disabled,
+		onclick,
 		children,
 		...restProps
-	}: ButtonProps = $props();
+	}: ButtonProps & { onclick?: (e: MouseEvent) => void } = $props();
 </script>
 
 {#if href}
@@ -60,8 +61,9 @@
 		class={cn(buttonVariants({ variant, size }), className)}
 		href={disabled ? undefined : href}
 		aria-disabled={disabled}
-		role={disabled ? "link" : undefined}
+		role={disabled ? 'link' : undefined}
 		tabindex={disabled ? -1 : undefined}
+		onclick={onclick}
 		{...restProps}
 	>
 		{@render children?.()}
@@ -73,6 +75,7 @@
 		class={cn(buttonVariants({ variant, size }), className)}
 		{type}
 		{disabled}
+		onclick={onclick}
 		{...restProps}
 	>
 		{@render children?.()}
