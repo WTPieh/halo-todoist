@@ -1,17 +1,13 @@
 <script lang="ts">
 import { Button } from "@components/button";
 import { Trash, Archive, ArchiveRestore, Loader2 } from "@lucide/svelte";
-import type { PersonalProject, WorkspaceProject } from "@doist/todoist-api-typescript";
-import { deleteProject } from "@/lib/api";
+import type { Project } from "$lib/api";
+import { deleteProject } from "$lib/api";
 import { toast } from 'svelte-sonner';
-import { Popover, PopoverContent, PopoverTrigger } from "@/lib/components/ui/popover";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from '$lib/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from "$lib/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "$lib/components/ui/tooltip";
 
-const { project, onDelete }: {project: (PersonalProject | WorkspaceProject), onDelete: () => void } = $props();
+const { project, onDelete }: {project: Project, onDelete: () => void } = $props();
 
 let popoverOpen = $state(false);
 let isDeleting = $state(false);

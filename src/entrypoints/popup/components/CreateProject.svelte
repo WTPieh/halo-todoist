@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { addProject } from "@/lib/api";
+  import { addProject } from "$lib/api";
   import { toast } from "svelte-sonner";
-  import type { PersonalProject, WorkspaceProject } from "@doist/todoist-api-typescript";
-  import { Popover, PopoverContent, PopoverTrigger } from "@/lib/components/ui/popover";
-  import { Button } from "@/lib/components/ui/button";
+  import type { Project } from "$lib/api";
+  import { Popover, PopoverContent, PopoverTrigger } from "$lib/components/ui/popover";
+  import { Button } from "$lib/components/ui/button";
   import { Loader2, Plus } from "@lucide/svelte";
-  import { Input } from "@/lib/components/ui/input";
+  import { Input } from "$lib/components/ui/input";
 
-  const { onCreateProject }: { onCreateProject: (project: PersonalProject | WorkspaceProject) => void } = $props();
+  const { onCreateProject }: { onCreateProject: (project: Project) => void } = $props();
 
   let isCreating = $state(false);
   let newProjectName = $state('');
@@ -15,7 +15,7 @@
   const handleCreateProject = async () => {
     try {
       isCreating = true;
-      const promise = new Promise<PersonalProject | WorkspaceProject>(async (resolve, reject) => {
+      const promise = new Promise<Project>(async (resolve, reject) => {
         try {
           const project = await addProject(newProjectName);
           resolve(project);
