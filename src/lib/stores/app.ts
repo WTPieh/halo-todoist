@@ -6,6 +6,7 @@ type AppStore = {
 	appState: AppState;
 	token: string | null | undefined;
 	projects: Project[];
+	isInitialized: boolean;
 };
 
 function createAppStore() {
@@ -13,6 +14,7 @@ function createAppStore() {
 		appState: AppState.LANDING,
 		token: undefined,
 		projects: [],
+		isInitialized: false,
 	});
 
 	return {
@@ -39,6 +41,7 @@ function createAppStore() {
 				...store,
 				appState: lastPage ? lastPage : AppState.LANDING,
 				token: token,
+				isInitialized: true,
 			}));
 		},
 	};
