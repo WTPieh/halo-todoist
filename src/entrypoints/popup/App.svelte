@@ -21,35 +21,35 @@
 <Toaster />
 <main class="w-full h-full bg-background text-foreground relative">
 	{#if $appStore.appState === AppState.LANDING}
-		<div>
+		<div transition:fade class="absolute w-full h-full">
 			<Landing />
 		</div>
 	{:else if $appStore.appState === AppState.INTRODUCTION}
-		<div transition:fade>
+		<div transition:fade class="absolute w-full h-full">
 			<Introduction />
 		</div>
 	{:else if $appStore.appState === AppState.AGREEMENT}
-		<div transition:fade>
+		<div transition:fade class="absolute w-full h-full">
 			<Agreement />
 		</div>
 	{:else if $appStore.appState === AppState.DASHBOARD}
-		<div transition:fade>
+		<div transition:fade class="absolute w-full h-full">
 			<Dashboard />
 		</div>
 	{:else if $appStore.appState === AppState.HALO_AUTH}
-		<div transition:fade>
+		<div transition:fade class="absolute w-full h-full">
 			<Halo />
 		</div>
 	{:else if $appStore.appState === AppState.TODOIST_AUTH}
-		<div transition:fade>
+		<div transition:fade class="absolute w-full h-full">
 			<Todoist />
 		</div>
 	{:else if $appStore.appState === AppState.TODOIST_ERROR}
-		<div transition:fade>
+		<div transition:fade class="absolute w-full h-full">
 			<TodoistError />
 		</div>
 	{:else if $appStore.appState === AppState.TODOIST_SUCCESS}
-		<div transition:fade>
+		<div transition:fade class="absolute w-full h-full">
 			<TodoistSuccess />
 		</div>
 	{/if}
