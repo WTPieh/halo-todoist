@@ -132,12 +132,24 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+
+@layer utilities {
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   html {
-    @apply w-200 h-150 font-sans h-screen;
+    @apply w-200 h-150 font-sans;
   }
   body {
     @apply bg-background text-foreground h-full;
@@ -145,7 +157,9 @@
   main {
     @apply text-base font-normal font-sans h-full;
   }
+  html,
+  body,
   #app {
-    @apply h-full;
+    @apply w-[800px] h-[600px];
   }
 }

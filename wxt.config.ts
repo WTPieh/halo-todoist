@@ -7,6 +7,10 @@ export default defineConfig({
   srcDir: 'src',
   modules: ['@wxt-dev/module-svelte'],
   manifest: {
+    browser_action: {
+      default_popup: 'popup.html',
+      default_title: 'Haloist'
+    },
     host_permissions: ['https://app.todoist.com/*'],
     permissions: ['identity', 'storage', 'cookies'],
   },
