@@ -17,7 +17,7 @@
 	export let projects: (PersonalProject | WorkspaceProject)[] = [];
 </script>
 
-<div class="w-1/2 border-l relative flex flex-col h-full">
+<div class="w-1/2 border-l flex flex-col h-full">
 	<div>
 		<Table>
 			<TableHeader>
@@ -56,9 +56,7 @@
 			</TableBody>
 		</Table>
 	</div>
-	<div
-		class="absolute bottom-0 w-full p-2 bg-background/10 backdrop-blur-xs h-11"
-	>
+	<div class="p-2 border-t">
 		<Button size="sm" variant="secondary" class="w-full justify-center">
 			<Plus class="size-4" />
 			Add a Project
