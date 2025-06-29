@@ -35,9 +35,8 @@
     "wxt": "^0.20.6"
   },
   "dependencies": {
-    "@doist/todoist-api-typescript": "^5.0.1",
+    "@doist/todoist-api-typescript": "^5.0.2",
     "@tailwindcss/vite": "^4.1.10",
-    "axios": "^1.10.0",
     "geist": "^1.4.2",
     "lucide-svelte": "^0.523.0",
     "tailwindcss": "^4.1.10"

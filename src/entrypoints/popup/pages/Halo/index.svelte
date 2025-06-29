@@ -16,6 +16,10 @@
     appStore.setAppState(AppState.TODOIST_AUTH);
   };
 
+  onMount(async () => {
+    await appStore.fetchProjects();
+  });
+
   const instructions = [
     {
       number: 1,

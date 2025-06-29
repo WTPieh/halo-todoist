@@ -19,31 +19,19 @@
 
   let isLoading = writable<boolean>(true);
 
+  onMount(() => {
+    // Fetch projects if the list is empty
+    if ($appStore.projects.length === 0) {
+      appStore.fetchProjects();
+    }
+  });
+
   const handleLogout = async () => {
     await storage.removeItem("local:todoist_token");
     await storage.removeItem("local:haloist_page");
     appStore.setToken(null);
     appStore.setAppState(AppState.LANDING);
     toast.info("You have been logged out.");
-  };
-
-  const fetchProjects = async () => {
-    const promise = new Promise<Project[]>(async (resolve, reject) => {
-      try {
-        const proj = await getProjects();
-        resolve(proj);
-      } catch (error) {
-        reject(error);
-      }
-    });
-
-    toast.promise(promise, {
-      loading: "Fetching projects...",
-      success: "Projects fetched successfully",
-      error: "Failed to fetch projects",
-    });
-    const response = await promise;
-    appStore.setProjects(response);
   };
 </script>
 
@@ -57,7 +45,10 @@
     <div class="flex flex-col gap-1">
       <InfoBar />
       <div class="flex flex-col gap-2">
-        <Controls on:logout={handleLogout} on:refetch={fetchProjects} />
+        <Controls
+          on:logout={handleLogout}
+          on:refetch={() => appStore.fetchProjects()}
+        />
         <!-- Tables -->
         <div
           class="rounded-lg border flex-grow flex max-h-[259px] overflow-hidden"
