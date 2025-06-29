@@ -1,20 +1,28 @@
-import { derived, get } from "svelte/store";
+import { derived, get, readable } from "svelte/store";
 import { AppState } from "./path";
 import { persistent } from "./persistent";
 import type { BackgroundState } from "@/shared/types";
 
-// 1. A single persistent store for the entire background state.
-export const backgroundState = persistent<BackgroundState | null>(
-  "local:background-state",
-  null
+// 1. Create the persistent stores and capture their initialization flags.
+const { store: backgroundStateStore, isInitialized: isBackgroundStateInitialized } =
+  persistent<BackgroundState | null>("local:background-state", null);
+
+const { store: appStateStore, isInitialized: isAppStateInitialized } =
+  persistent<AppState>("local:haloist_page", AppState.LANDING);
+
+const { store: acceptedTermsStore, isInitialized: isAcceptedTermsInitialized } =
+  persistent("local:accepted_terms", false);
+
+// A single store to signal when all primary UI stores are ready.
+export const isAppInitialized = derived(
+  [isBackgroundStateInitialized, isAppStateInitialized, isAcceptedTermsInitialized],
+  ($values) => $values.every(Boolean)
 );
 
-// UI-specific state should be stored separately.
-export const appState = persistent<AppState>(
-  "local:haloist_page",
-  AppState.LANDING
-);
-export const acceptedTerms = persistent("local:accepted_terms", false);
+// 2. Export the stores themselves for the UI to use.
+export const backgroundState = backgroundStateStore;
+export const appState = appStateStore;
+export const acceptedTerms = acceptedTermsStore;
 
 // 2. Derived stores for easy access to slices of the state.
 export const haloSession = derived(
@@ -53,15 +61,15 @@ function createActions() {
       browser.runtime.sendMessage({ type: "todoist-fetch-projects" });
     },
     logout: () => {
-      backgroundState.set(null);
-      appState.set(AppState.LANDING);
-      acceptedTerms.set(false);
+      backgroundStateStore.set(null);
+      appStateStore.set(AppState.LANDING);
+      acceptedTermsStore.set(false);
     },
     setAppState: (newState: AppState) => {
-      appState.set(newState);
+      appStateStore.set(newState);
     },
     setAcceptedTerms: () => {
-      acceptedTerms.set(true);
+      acceptedTermsStore.set(true);
     },
   };
 }

@@ -3,27 +3,30 @@
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { buttonVariants } from '$lib/components/ui/button';
-	import { user } from '$lib/stores/app';
+	import { haloUser } from '$lib/stores/app';
+
+	$: user = $haloUser?.data?.userInfo;
 
 	$: initials =
-		$user?.firstName && $user?.lastName
-			? `${$user.firstName[0]}${$user.lastName[0]}`
+		user?.firstName && user?.lastName
+			? `${user.firstName[0]}${user.lastName[0]}`
 			: "??";
 </script>
 
-<header class="flex items-center justify-between border-b border-border px-5 pt-5 pb-2">
-	{#if $user}
+<header class="flex items-center justify-between">
+	{#if user}
 		<div class="flex items-center gap-4">
 			<Avatar>
-				<AvatarImage src={$user.userImgUrl} alt={$user.firstName} />
+				<AvatarImage src={user.userImgUrl} alt={user.firstName} />
 				<AvatarFallback>{initials}</AvatarFallback>
 			</Avatar>
 			<div>
 				<div class="flex items-center gap-1">
-					<p class="font-semibold">Hello, {$user.firstName}</p>
+					<p class="font-semibold">
+						Hello, {user.preferredFirstName || user.firstName}
+					</p>
 					<ChevronDown class="size-4" />
 				</div>
-				<p class="text-sm text-muted-foreground">{$user.email}</p>
 			</div>
 		</div>
 	{:else}

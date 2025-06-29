@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { CircleHelp, LogOut, RefreshCcw } from 'lucide-svelte';
+	import { LogOut, RefreshCcw, LoaderCircle } from 'lucide-svelte';
+	import { todoistProjects } from '$lib/stores/app';
 
 	export let onLogout: () => void;
 	export let onRefetch: () => void;
+
+	$: isLoading = $todoistProjects?.status === 'loading';
 </script>
 
 <div class="flex items-center justify-between">
@@ -13,8 +16,14 @@
 		<Button variant="ghost" size="sm" onclick={onLogout}
 			><LogOut class="size-4" /></Button
 		>
-		<Button variant="outline" size="sm" onclick={onRefetch}
-			><RefreshCcw class="size-4 mr-2" /> Refresh</Button
-		>
+		<Button variant="outline" size="sm" onclick={onRefetch} disabled={isLoading}>
+			{#if isLoading}
+				<LoaderCircle class="size-4 mr-2 animate-spin" />
+				Refreshing...
+			{:else}
+				<RefreshCcw class="size-4 mr-2" />
+				Refresh
+			{/if}
+		</Button>
 	</div>
 </div> 

@@ -13,7 +13,7 @@
 	$: classes = $haloUser?.data?.classes?.courseClasses ?? [];
 </script>
 
-<div class="w-1/2 flex flex-col">
+<div class="w-1/2 flex flex-col h-full">
 	<div>
 		<Table>
 			<TableHeader>
@@ -24,7 +24,7 @@
 			</TableHeader>
 		</Table>
 	</div>
-	<div class="overflow-y-auto">
+	<div class="overflow-y-auto flex-grow">
 		<Table>
 			<TableBody>
 				{#if classes.length > 0}
@@ -35,11 +35,11 @@
 						</TableRow>
 					{/each}
 				{:else}
-					<TableRow>
-						<TableCell colspan={2} class="h-24 text-center">
-							No classes found. Try refreshing.
-						</TableCell>
-					</TableRow>
+					<div
+						class="w-full h-full flex items-center justify-center text-sm text-muted-foreground"
+					>
+						No classes found.
+					</div>
 				{/if}
 			</TableBody>
 		</Table>

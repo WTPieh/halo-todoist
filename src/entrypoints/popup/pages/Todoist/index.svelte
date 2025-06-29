@@ -1,44 +1,68 @@
 <script lang="ts">
+  import { toast } from "svelte-sonner";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { LogIn } from "lucide-svelte";
+  import { appStore } from "$lib/stores/app";
+  import { AppState } from "$lib/stores/path";
+  import { onMount } from "svelte";
   import { writable } from "svelte/store";
+  import Content from "../../components/shared/Content.svelte";
   import Container from "../../components/shared/Container.svelte";
+  import Heading from "../../components/shared/Heading.svelte";
   import BottomContainer from "../../components/BottomContainer.svelte";
   import PageIndex from "../../components/shared/PageIndex.svelte";
-  import Heading from "../../components/shared/Heading.svelte";
-  import Content from "../../components/shared/Content.svelte";
+  import { LoaderCircle, LogIn } from "lucide-svelte";
   import todoistLogo from "@/assets/todoist.png";
-  import { AppState } from "@/lib/stores/path";
-  import { appStore } from "$lib/stores/app";
 
-  let isAuthenticated = writable(false);
-  const handleTodoistLogin = async () => {
-    let value = Math.random();
-    if (value >= 0.5) appStore.setAppState(AppState.TODOIST_ERROR);
-    else appStore.setAppState(AppState.TODOIST_SUCCESS);
+  let isLoading = writable(false);
+  let error = writable<string | null>(null);
+
+  const handleLogin = async () => {
+    isLoading.set(true);
+    error.set(null);
+    try {
+      const response = await browser.runtime.sendMessage({
+        type: "todoist-auth",
+      });
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+      toast.success("Successfully authenticated with Todoist!");
+      appStore.setAppState(AppState.DASHBOARD);
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : "An unknown error occurred.";
+      error.set(errorMessage);
+      toast.error(`Authentication Failed: ${errorMessage}`);
+    } finally {
+      isLoading.set(false);
+    }
   };
 </script>
 
 <Container>
   <Content>
-    <div
-      class="flex flex-col items-center justify-start h-full text-center gap-4"
-    >
-      <Heading
-        title="Excellent! You're nearly there."
-        description="All that's left is to connect your Todoist account."
-      />
-      <div class="flex flex-col items-center justify-center gap-4 p-5 h-full">
-        <img src={todoistLogo} alt="Todoist Logo" class="size-16" />
-        <Button onclick={handleTodoistLogin}>
-          <LogIn class="size-4" />
-          Login to Todoist
-        </Button>
-        <p class="text-xs text-muted-foreground max-w-60">
-          We're requesting the right to view, create and update projects and
-          tasks for you.
-        </p>
-      </div>
+    <Heading
+      title="Excellent! You're nearly there."
+      description="All that's left is to connect your Todoist account."
+    />
+    <div class="flex-grow flex flex-col items-center justify-center gap-4">
+      <img src={todoistLogo} alt="Todoist Logo" class="size-16" />
+      <Button size="lg" onclick={handleLogin} disabled={$isLoading}>
+        {#if $isLoading}
+          <LoaderCircle class="size-4 mr-2 animate-spin" />
+          Authenticating...
+        {:else}
+          <LogIn class="size-4 mr-2" />
+          Login with Todoist
+        {/if}
+      </Button>
+      <p class="text-xs text-center text-muted-foreground max-w-60">
+        We're requesting the right to view, create and update projects and tasks
+        for you.
+      </p>
+      {#if $error}
+        <p class="text-sm text-destructive text-center">Error: {$error}</p>
+      {/if}
     </div>
   </Content>
   <BottomContainer class="flex justify-start">

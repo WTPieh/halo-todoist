@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { todoistProjects } from "$lib/stores/app";
 	import { Button } from "$lib/components/ui/button";
 	import {
 		Table,
@@ -10,11 +9,13 @@
 		TableRow,
 	} from "$lib/components/ui/table";
 	import { Plus, Trash } from "lucide-svelte";
+	import TodoistItem from "../../../components/TodoistItem.svelte";
+	import type { PersonalProject, WorkspaceProject } from "@doist/todoist-api-typescript";
 
-	$: projects = $todoistProjects?.data ?? [];
+	export let projects: (PersonalProject | WorkspaceProject)[] = [];
 </script>
 
-<div class="w-1/2 border-l relative flex flex-col">
+<div class="w-1/2 border-l relative flex flex-col h-full">
 	<div>
 		<Table>
 			<TableHeader>
@@ -42,11 +43,11 @@
 						</TableRow>
 					{/each}
 				{:else}
-					<TableRow>
-						<TableCell colspan={2} class="h-24 text-center">
-							No projects found. Try refetching or create one.
-						</TableCell>
-					</TableRow>
+					<div
+						class="w-full h-full flex items-center justify-center text-sm text-muted-foreground text-center p-4"
+					>
+						No projects found. <br />Try refetching or create one.
+					</div>
 				{/if}
 			</TableBody>
 		</Table>

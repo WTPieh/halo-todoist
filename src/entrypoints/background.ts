@@ -10,6 +10,8 @@ import {
   StateSlice,
   BackgroundState,
 } from "@/shared/types";
+import { handleTodoistAuth } from "@/lib/auth";
+import { getProjects } from "@/lib/api";
 
 // The storage key and default state remain the same, but the types are now imported.
 const STORAGE_KEY = "background-state";
@@ -29,6 +31,7 @@ const defaultState: BackgroundState = {
     data: null,
     error: null,
   },
+  todoistToken: null,
 };
 
 // --- State Management Helpers ---
@@ -111,21 +114,41 @@ export default defineBackground(() => {
         })();
         return true; // Indicate that sendResponse will be called asynchronously
 
-      // --- Todoist Project Fetching (Placeholder) ---
-      case "todoist-fetch-projects":
+      // --- Todoist Authentication Flow ---
+      case "todoist-auth":
+        (async () => {
+          try {
+            await handleTodoistAuth();
+            sendResponse({ success: true });
+          } catch (error) {
+            console.error("Error during Todoist authentication:", error);
+            sendResponse({
+              error: error instanceof Error ? error.message : "An unknown error occurred.",
+            });
+          }
+        })();
+        return true;
+
+      // --- Todoist Project Fetching (called from Dashboard Refresh) ---
+      case "refetch-todoist-projects":
         (async () => {
           let state = await getState();
           state.todoistProjects.status = "loading";
           await setState(state);
 
           try {
-            //
-            // TODO: Add your actual Todoist project fetching logic here.
-            // For now, we'll simulate a delay and then throw a placeholder error.
-            //
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+            const token = state.todoistToken;
+            if (!token) {
+              throw new Error("Todoist token not found. Please authenticate.");
+            }
 
-            throw new Error("Todoist project fetching is not implemented yet.");
+            const projects = await getProjects(token);
+            state.todoistProjects.status = "success";
+            state.todoistProjects.data = projects;
+            state.todoistProjects.error = null;
+            state.todoistProjects.lastUpdated = Date.now();
+            await setState(state);
+            sendResponse({ success: true });
           } catch (error) {
             console.error("Error fetching Todoist projects:", error);
             state.todoistProjects.status = "error";
@@ -134,10 +157,11 @@ export default defineBackground(() => {
               error instanceof Error
                 ? error.message
                 : "An unknown error occurred.";
+            await setState(state);
+            sendResponse({
+              error: state.todoistProjects.error,
+            });
           }
-
-          await setState(state);
-          sendResponse(state.todoistProjects);
         })();
         return true;
 

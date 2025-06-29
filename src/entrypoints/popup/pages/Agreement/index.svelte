@@ -14,7 +14,7 @@
 
   const handleProceed = () => {
     appStore.setAcceptedTerms();
-    appStore.setAppState(AppState.DASHBOARD);
+    appStore.setAppState(AppState.HALO_AUTH);
   };
 
   const handleBack = () => {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Toaster } from "$lib/components/ui/sonner";
-  import { appState } from "$lib/stores/app";
+  import { appState, isAppInitialized } from "$lib/stores/app";
   import { AppState } from "$lib/stores/path";
   import Agreement from "./pages/Agreement/index.svelte";
   import Dashboard from "./pages/Dashboard/index.svelte";
@@ -15,37 +15,44 @@
 
 <Toaster />
 <main class="w-full h-full bg-background text-foreground relative">
-  {#if $appState === AppState.LANDING}
-    <div transition:fade class="absolute w-full h-full">
-      <Landing />
-    </div>
-  {:else if $appState === AppState.INTRODUCTION}
-    <div transition:fade class="absolute w-full h-full">
-      <Introduction />
-    </div>
-  {:else if $appState === AppState.AGREEMENT}
-    <div transition:fade class="absolute w-full h-full">
-      <Agreement />
-    </div>
-  {:else if $appState === AppState.DASHBOARD}
-    <div transition:fade class="absolute w-full h-full">
-      <Dashboard />
-    </div>
-  {:else if $appState === AppState.HALO_AUTH}
-    <div transition:fade class="absolute w-full h-full">
-      <Halo />
-    </div>
-  {:else if $appState === AppState.TODOIST_AUTH}
-    <div transition:fade class="absolute w-full h-full">
-      <Todoist />
-    </div>
-  {:else if $appState === AppState.TODOIST_ERROR}
-    <div transition:fade class="absolute w-full h-full">
-      <TodoistError />
-    </div>
-  {:else if $appState === AppState.TODOIST_SUCCESS}
-    <div transition:fade class="absolute w-full h-full">
-      <TodoistSuccess />
+  {#if $isAppInitialized}
+    {#if $appState === AppState.LANDING}
+      <div transition:fade class="absolute w-full h-full">
+        <Landing />
+      </div>
+    {:else if $appState === AppState.INTRODUCTION}
+      <div transition:fade class="absolute w-full h-full">
+        <Introduction />
+      </div>
+    {:else if $appState === AppState.AGREEMENT}
+      <div transition:fade class="absolute w-full h-full">
+        <Agreement />
+      </div>
+    {:else if $appState === AppState.DASHBOARD}
+      <div transition:fade class="absolute w-full h-full">
+        <Dashboard />
+      </div>
+    {:else if $appState === AppState.HALO_AUTH}
+      <div transition:fade class="absolute w-full h-full">
+        <Halo />
+      </div>
+    {:else if $appState === AppState.TODOIST_AUTH}
+      <div transition:fade class="absolute w-full h-full">
+        <Todoist />
+      </div>
+    {:else if $appState === AppState.TODOIST_ERROR}
+      <div transition:fade class="absolute w-full h-full">
+        <TodoistError />
+      </div>
+    {:else if $appState === AppState.TODOIST_SUCCESS}
+      <div transition:fade class="absolute w-full h-full">
+        <TodoistSuccess />
+      </div>
+    {/if}
+  {:else}
+    <!-- You can add a loading spinner here if you want -->
+    <div class="w-full h-full flex items-center justify-center">
+      <!-- Loading... -->
     </div>
   {/if}
 </main>

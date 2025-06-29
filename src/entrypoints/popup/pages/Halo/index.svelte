@@ -71,7 +71,7 @@
     <PageIndex page={3} total={4} />
     <div class="flex items-center gap-4">
       {#if status === 'success'}
-        <span class="text-base font-semibold text-primary flex items-center gap-2">
+        <span class="text-base font-semibold flex items-center gap-2">
           <CircleCheck class="size-5" /> Authenticated!
         </span>
         <Button onclick={handleConfirm}>Confirm</Button>

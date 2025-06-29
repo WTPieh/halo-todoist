@@ -1,4 +1,5 @@
 import { storage } from '#imports';
+import { GetProjectsResponse, PersonalProject, WorkspaceProject } from '@doist/todoist-api-typescript';
 
 // Based on the Todoist REST API v1 documentation for a project object.
 export interface Project {
@@ -17,15 +18,15 @@ export interface Project {
 }
 
 /**
- * A helper function to get the auth token and create the required headers.
+ * A helper function to create the required headers from a token.
+ * @param {string} token The Todoist authentication token.
  * @returns {HeadersInit} The authorization headers.
- * @throws {Error} If the authentication token is not found.
+ * @throws {Error} If the token is not provided.
  */
-const getAuthHeaders = async (): Promise<HeadersInit> => {
-	const token = (await storage.getItem('local:todoist_token')) as string;
-	if (!token) throw new Error('Authentication token not found.');
+const getAuthHeaders = (token: string): HeadersInit => {
+	if (!token) throw new Error("Authentication token not provided.");
 	return {
-		'Content-Type': 'application/json',
+		"Content-Type": "application/json",
 		Authorization: `Bearer ${token}`,
 	};
 };
@@ -37,27 +38,34 @@ const unwrapTodoistResponse = async <T>(response: Response): Promise<T> => {
 
 /**
  * Fetches all projects for the authenticated user via a direct v1 REST API call.
+ * @param {string} token The user's Todoist authentication token.
  */
-export const getProjects = async (): Promise<Project[]> => {
-	const headers = await getAuthHeaders();
-	const response = await fetch('https://api.todoist.com/api/v1/projects', { headers });
+export const getProjects = async (token: string): Promise<(PersonalProject | WorkspaceProject)[]> => {
+	const headers = getAuthHeaders(token);
+	const response = await fetch("https://api.todoist.com/api/v1/projects", {
+		headers,
+	});
 
 	if (!response.ok) {
 		throw new Error(`Failed to fetch projects: ${response.statusText}`);
 	}
 
-	return unwrapTodoistResponse<Project[]>(response);
+	return unwrapTodoistResponse<(PersonalProject | WorkspaceProject)[]>(response);
 };
 
 /**
  * Adds a new project using a direct v1 REST API call.
  * @param projectName The name of the project to create.
+ * @param {string} token The user's Todoist authentication token.
  */
-export const addProject = async (projectName: string): Promise<Project> => {
-	const headers = await getAuthHeaders();
+export const addProject = async (
+	projectName: string,
+	token: string
+): Promise<Project> => {
+	const headers = getAuthHeaders(token);
 	const body = JSON.stringify({ name: projectName });
 
-	const response = await fetch('https://api.todoist.com/api/v1/projects', {
+	const response = await fetch("https://api.todoist.com/api/v1/projects", {
 		method: 'POST',
 		headers,
 		body,
@@ -73,9 +81,13 @@ export const addProject = async (projectName: string): Promise<Project> => {
 /**
  * Deletes a project using a direct v1 REST API call.
  * @param projectId The ID of the project to delete.
+ * @param {string} token The user's Todoist authentication token.
  */
-export const deleteProject = async (projectId: string): Promise<boolean> => {
-	const headers = await getAuthHeaders();
+export const deleteProject = async (
+	projectId: string,
+	token: string
+): Promise<boolean> => {
+	const headers = getAuthHeaders(token);
 
 	const response = await fetch(`https://api.todoist.com/api/v1/projects/${projectId}`, {
 		method: 'DELETE',
@@ -105,11 +117,10 @@ export type BatchRequest = Command[];
 /**
  * Sends a batch of commands to the Todoist Sync API.
  * @param commands An array of commands to execute.
- * @returns The JSON response from the Sync API.
+ * @param {string} token The user's Todoist authentication token.
  */
-export const batchRequest = async (commands: BatchRequest) => {
-	const token = (await storage.getItem('local:todoist_token')) as string;
-	if (!token) throw new Error('Authentication token not found.');
+export const batchRequest = async (commands: BatchRequest, token: string) => {
+	if (!token) throw new Error("Authentication token not found.");
 
 	const payload = {
 		commands: JSON.stringify(commands),
