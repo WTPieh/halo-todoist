@@ -231,3 +231,24 @@ export type HaloCookies = {
   "TE1TX0FVVEg": string;
   "TE1TX0NPTlRFWFQ": string;
 };
+
+export type HaloInfo = HaloCookies & {
+  userId: string;
+  user: {
+    email: string;
+  };
+};
+
+// --- Background State Management ---
+export type StateSlice<T> = {
+  status: "idle" | "loading" | "success" | "error";
+  data: T | null;
+  error?: string | null;
+  lastUpdated?: number | null;
+};
+
+export type BackgroundState = {
+  haloSession: StateSlice<HaloInfo>;
+  haloUser: StateSlice<UserOverview>;
+  todoistProjects: StateSlice<any[]>; // Using any[] for now for projects
+};

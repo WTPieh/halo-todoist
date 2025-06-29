@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appStore } from "$lib/stores/app";
+	import { todoistProjects } from "$lib/stores/app";
 	import { Button } from "$lib/components/ui/button";
 	import {
 		Table,
@@ -10,6 +10,8 @@
 		TableRow,
 	} from "$lib/components/ui/table";
 	import { Plus, Trash } from "lucide-svelte";
+
+	$: projects = $todoistProjects?.data ?? [];
 </script>
 
 <div class="w-1/2 border-l relative flex flex-col">
@@ -17,9 +19,7 @@
 		<Table>
 			<TableHeader>
 				<TableRow>
-					<TableHead class="px-2 text-sm"
-						>Projects ({$appStore.projects.length}/5)</TableHead
-					>
+					<TableHead class="px-2 text-sm">Projects ({projects.length}/5)</TableHead>
 					<TableHead class="w-16 text-center"></TableHead>
 				</TableRow>
 			</TableHeader>
@@ -28,18 +28,26 @@
 	<div class="flex-grow overflow-y-auto">
 		<Table>
 			<TableBody>
-				{#each $appStore.projects as project}
+				{#if projects.length > 0}
+					{#each projects as project}
+						<TableRow>
+							<TableCell class="px-2 h-[44px] py-0">
+								<p class="text-sm leading-tight">{project.name}</p>
+							</TableCell>
+							<TableCell class="w-16 h-[44px] py-0 text-center">
+								<Button variant="ghost" size="icon">
+									<Trash />
+								</Button>
+							</TableCell>
+						</TableRow>
+					{/each}
+				{:else}
 					<TableRow>
-						<TableCell class="px-2 h-[44px] py-0"
-							><p class="text-sm leading-tight">{project.name}</p></TableCell
-						>
-						<TableCell class="w-16 h-[44px] py-0 text-center">
-							<Button variant="ghost" size="icon">
-								<Trash />
-							</Button>
+						<TableCell colspan={2} class="h-24 text-center">
+							No projects found. Try refetching or create one.
 						</TableCell>
 					</TableRow>
-				{/each}
+				{/if}
 			</TableBody>
 		</Table>
 	</div>

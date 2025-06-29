@@ -2,19 +2,18 @@
   import { Checkbox } from "$lib/components/ui/checkbox";
   import Button from "$lib/components/ui/button/button.svelte";
   import { ArrowLeft, ArrowRight } from "lucide-svelte";
-  import { writable } from "svelte/store";
   import Container from "../../components/shared/Container.svelte";
   import BottomContainer from "../../components/BottomContainer.svelte";
   import PageIndex from "../../components/shared/PageIndex.svelte";
   import Heading from "../../components/shared/Heading.svelte";
   import { AppState } from "@/lib/stores/path";
   import Content from "../../components/shared/Content.svelte";
-  import { appStore } from "$lib/stores/app";
+  import { appStore, acceptedTerms } from "$lib/stores/app";
 
-  let agreed = writable(false);
   let lastUpdated = "Last updated: June 27, 2025";
 
   const handleProceed = () => {
+    appStore.setAcceptedTerms();
     appStore.setAppState(AppState.DASHBOARD);
   };
 
@@ -105,7 +104,7 @@
         </p>
       </section>
       <div class="flex items-center space-x-2 pt-4 border-t border-border">
-        <Checkbox id="terms" bind:checked={$agreed} class="bg-background" />
+        <Checkbox id="terms" bind:checked={$acceptedTerms} class="bg-background" />
         <label
           for="terms"
           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-left"
@@ -121,7 +120,7 @@
       <Button variant="outline" onclick={handleBack}>
         Back
       </Button>
-      <Button disabled={!$agreed} onclick={handleProceed}>
+      <Button disabled={!$acceptedTerms} onclick={handleProceed}>
         Proceed <ArrowRight class="size-4" />
       </Button>
     </div>

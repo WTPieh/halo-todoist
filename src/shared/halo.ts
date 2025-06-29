@@ -20,6 +20,7 @@ import {
 	CourseClassResponse,
 	CourseClass,
 	UserOverview,
+	HaloInfo,
 } from "./types";
 
 export const AUTHORIZATION_KEY = 'TE1TX0FVVEg';
@@ -141,28 +142,27 @@ export const getClassInformation = async function ({
 	return res.data.currentClass as CourseClass;
 };
 
-export const getInformation = async function (): Promise<{
-	[AUTHORIZATION_KEY]: string;
-	[CONTEXT_KEY]: string;
-	userId: string;
-} | { code: number; error: unknown }> {
+export const getInformation = async function (): Promise<
+	HaloInfo | { code: number; error: unknown }
+> {
 	try {
 		const data = await fetch(url.validate, {
-			method: 'GET',
+			method: "GET",
 			headers: {
-				accept: '*/*',
-				'content-type': 'application/json',
+				accept: "*/*",
+				"content-type": "application/json",
 			},
 		});
 
 		const res = await data.json();
 
-		const output = {
-			[AUTHORIZATION_KEY]: res['authToken'],
-			[CONTEXT_KEY]: res['contextToken'],
-			userId: res['userId'],
+		const output: HaloInfo = {
+			[AUTHORIZATION_KEY]: res["authToken"],
+			[CONTEXT_KEY]: res["contextToken"],
+			userId: res["userId"],
+			user: res["user"],
 		};
-		console.log('information', output);
+		console.log("information", output);
 
 		return output;
 	} catch (e) {

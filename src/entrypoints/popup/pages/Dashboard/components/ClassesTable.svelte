@@ -8,9 +8,9 @@
 		TableHeader,
 		TableRow
 	} from '$lib/components/ui/table';
+	import { haloUser } from '$lib/stores/app';
 
-	// Later, this will be real data passed in as a prop.
-	// export let classes: any[] = [];
+	$: classes = $haloUser?.data?.classes?.courseClasses ?? [];
 </script>
 
 <div class="w-1/2 flex flex-col">
@@ -19,7 +19,7 @@
 			<TableHeader>
 				<TableRow>
 					<TableHead class="w-8 px-2"><Checkbox /></TableHead>
-					<TableHead class="px-2">Classes (5)</TableHead>
+					<TableHead class="px-2">Classes ({classes.length})</TableHead>
 				</TableRow>
 			</TableHeader>
 		</Table>
@@ -27,13 +27,20 @@
 	<div class="overflow-y-auto">
 		<Table>
 			<TableBody>
-				<!-- Placeholder Rows -->
-				{#each Array(15) as _}
+				{#if classes.length > 0}
+					{#each classes as course}
+						<TableRow>
+							<TableCell class="w-8 px-2 h-[44px] py-0"><Checkbox /></TableCell>
+							<TableCell class="px-2 h-[44px] py-0">{course.name}</TableCell>
+						</TableRow>
+					{/each}
+				{:else}
 					<TableRow>
-						<TableCell class="w-8 px-2 h-[44px] py-0"><Checkbox /></TableCell>
-						<TableCell class="px-2 h-[44px] py-0">CST-221: Web Application Development</TableCell>
+						<TableCell colspan={2} class="h-24 text-center">
+							No classes found. Try refreshing.
+						</TableCell>
 					</TableRow>
-				{/each}
+				{/if}
 			</TableBody>
 		</Table>
 	</div>

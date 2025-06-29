@@ -1,12 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { storage } from "#imports";
   import { toast } from "svelte-sonner";
   import Toaster from "$lib/components/ui/sonner/sonner.svelte";
   import Container from "../../components/shared/Container.svelte";
-  import type { Project } from "$lib/api";
-  import { writable } from "svelte/store";
-  import { getProjects } from "$lib/api";
   import Footer from "../../components/shared/Footer.svelte";
   import Header from "./components/Header.svelte";
   import InfoBar from "./components/InfoBar.svelte";
@@ -14,23 +9,10 @@
   import ClassesTable from "./components/ClassesTable.svelte";
   import ProjectsTable from "./components/ProjectsTable.svelte";
   import Actions from "./components/Actions.svelte";
-  import { appStore } from "$lib/stores/app";
-  import { AppState } from "$lib/stores/path";
+  import { appStore, haloSession, todoistProjects } from "$lib/stores/app";
 
-  let isLoading = writable<boolean>(true);
-
-  onMount(() => {
-    // Fetch projects if the list is empty
-    if ($appStore.projects.length === 0) {
-      appStore.fetchProjects();
-    }
-  });
-
-  const handleLogout = async () => {
-    await storage.removeItem("local:todoist_token");
-    await storage.removeItem("local:haloist_page");
-    appStore.setToken(null);
-    appStore.setAppState(AppState.LANDING);
+  const handleLogout = () => {
+    appStore.logout();
     toast.info("You have been logged out.");
   };
 </script>
@@ -46,8 +28,8 @@
       <InfoBar />
       <div class="flex flex-col gap-2">
         <Controls
-          on:logout={handleLogout}
-          on:refetch={() => appStore.fetchProjects()}
+          onLogout={handleLogout}
+          onRefetch={appStore.fetchTodoistProjects}
         />
         <!-- Tables -->
         <div

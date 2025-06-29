@@ -1,98 +1,69 @@
-import { writable, get } from "svelte/store";
+import { derived, get } from "svelte/store";
 import { AppState } from "./path";
-import { Project } from "$lib/api";
-import { HaloValidateResponse } from "@/shared/types";
-import { toast } from "svelte-sonner";
+import { persistent } from "./persistent";
+import type { BackgroundState } from "@/shared/types";
 
-type AppStore = {
-  appState: AppState;
-  todoistToken: string | null | undefined;
-  projects: Project[];
-  haloSession: HaloValidateResponse | null | undefined;
-  acceptedTerms: boolean;
-  isInitialized: boolean;
-  loadingProjects: boolean;
-};
+// 1. A single persistent store for the entire background state.
+export const backgroundState = persistent<BackgroundState | null>(
+  "local:background-state",
+  null
+);
 
-function createAppStore() {
-  const { subscribe, update, set } = writable<AppStore>({
-    appState: AppState.LANDING,
-    todoistToken: undefined,
-    haloSession: undefined,
-    projects: [],
-    acceptedTerms: false,
-    isInitialized: false,
-    loadingProjects: false,
-  });
+// UI-specific state should be stored separately.
+export const appState = persistent<AppState>(
+  "local:haloist_page",
+  AppState.LANDING
+);
+export const acceptedTerms = persistent("local:accepted_terms", false);
 
+// 2. Derived stores for easy access to slices of the state.
+export const haloSession = derived(
+  backgroundState,
+  ($state) => $state?.haloSession
+);
+export const haloUser = derived(backgroundState, ($state) => $state?.haloUser);
+export const todoistProjects = derived(
+  backgroundState,
+  ($state) => $state?.todoistProjects
+);
+
+// A derived store for the combined user object, for convenience in the UI.
+export const user = derived(
+  [haloUser, haloSession],
+  ([$haloUser, $haloSession]) => {
+    if (!$haloUser?.data || !$haloSession?.data) {
+      return null;
+    }
+    return {
+      firstName: $haloUser.data.userInfo.firstName,
+      lastName: $haloUser.data.userInfo.lastName,
+      userImgUrl: $haloUser.data.userInfo.userImgUrl,
+      email: $haloSession.data.user.email,
+    };
+  }
+);
+
+// 3. The actions object.
+function createActions() {
   return {
-    subscribe,
-    set,
-    setAppState: (appState: AppState) => {
-      if (!get(appStore).todoistToken && !get(appStore).acceptedTerms) {
-        update((store) => ({
-          ...store,
-          appState: AppState.AGREEMENT,
-        }));
-      } else if (!get(appStore).todoistToken) {
-        update((store) => ({
-          ...store,
-          appState: AppState.HALO_AUTH,
-        }));
-      }
-      update((store) => ({ ...store, appState }));
-      storage.setItem("local:haloist_page", appState);
+    fetchHaloSession: () => {
+      browser.runtime.sendMessage({ type: "halo-fetch-session" });
     },
-    setToken: (token: string | null | undefined) => {
-      update((store) => ({ ...store, token }));
+    fetchTodoistProjects: () => {
+      browser.runtime.sendMessage({ type: "todoist-fetch-projects" });
     },
-    setProjects: (projects: Project[]) => {
-      update((store) => ({ ...store, projects }));
+    logout: () => {
+      backgroundState.set(null);
+      appState.set(AppState.LANDING);
+      acceptedTerms.set(false);
     },
-    setAcceptedTerms: (flag: boolean) => {
-      update((store) => ({ ...store, acceptedTerms: true }));
-      storage.setItem("local:accepted_terms", true);
+    setAppState: (newState: AppState) => {
+      appState.set(newState);
     },
-    fetchHaloSession: async () => {
-      browser.runtime.onConnect.addListener(() => {
-        browser.runtime.sendMessage({ type: "halo-session" }, (result) => {
-          console.log(result);
-        });
-      });
-    },
-    fetchProjects: async () => {
-      update((store) => ({ ...store, loadingProjects: true }));
-      const response = await browser.runtime.sendMessage({
-        type: "fetch-halo",
-      });
-      if (response && !response.error) {
-        const userInfo = response as HaloValidateResponse;
-
-      }
-      else {
-        console.log("Error in background.ts: ", response?.error);
-      }
-    },
-    initialize: async () => {
-      const lastPage = await storage.getItem<AppState>("local:haloist_page");
-      const todoistToken = await storage.getItem<string>("local:todoist_token");
-      const haloSession = await storage.getItem<HaloValidateResponse>(
-        "local:halo_session"
-      );
-
-      const raw = await storage.getItem("local:accepted_terms");
-      const acceptedTerms = raw === "true";
-
-      update((store) => ({
-        ...store,
-        appState: lastPage ?? AppState.LANDING,
-        todoistToken,
-        haloSession,
-        isInitialized: true,
-        acceptedTerms,
-      }));
+    setAcceptedTerms: () => {
+      acceptedTerms.set(true);
     },
   };
 }
 
-export const appStore = createAppStore();
+export const appStore = createActions();
