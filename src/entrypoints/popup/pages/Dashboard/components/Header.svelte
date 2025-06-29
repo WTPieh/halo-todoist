@@ -3,9 +3,13 @@
 	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { buttonVariants } from '$lib/components/ui/button';
-	import { haloUser } from '$lib/stores/app';
+	import { haloUser, haloSession } from '$lib/stores/app';
+	import { Separator } from '$lib/components/ui/separator';
+
+	export let onLogout: () => void;
 
 	$: user = $haloUser?.data?.userInfo;
+	$: session = $haloSession?.data;
 
 	$: initials =
 		user?.firstName && user?.lastName
@@ -14,21 +18,38 @@
 </script>
 
 <header class="flex items-center justify-between">
-	{#if user}
-		<div class="flex items-center gap-4">
-			<Avatar>
-				<AvatarImage src={user.userImgUrl} alt={user.firstName} />
-				<AvatarFallback>{initials}</AvatarFallback>
-			</Avatar>
-			<div>
-				<div class="flex items-center gap-1">
-					<p class="font-semibold">
-						Hello, {user.preferredFirstName || user.firstName}
+	{#if user && session}
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger
+				class="flex items-center gap-4 cursor-pointer p-2 rounded-lg transition-colors hover:bg-muted"
+			>
+				<Avatar class="size-10">
+					<AvatarImage src={user.userImgUrl} alt={user.firstName} />
+					<AvatarFallback>{initials}</AvatarFallback>
+				</Avatar>
+				<div>
+					<div class="flex items-center gap-1">
+						<p>
+							Hello, <span class="font-semibold">{user.preferredFirstName || user.firstName}</span>
+						</p>
+						<ChevronDown class="size-4" />
+					</div>
+					<p class="text-sm text-left text-muted-foreground">
+						{session.user.email}
 					</p>
-					<ChevronDown class="size-4" />
 				</div>
-			</div>
-		</div>
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content side="bottom" align="end">
+				<DropdownMenu.Item onclick={() => window.open('https://discord.gg/your-server', '_blank')}>
+					Discord
+				</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => window.open('mailto:support@example.com')}>
+					Support
+				</DropdownMenu.Item>
+				<Separator />
+				<DropdownMenu.Item onclick={onLogout}>Logout</DropdownMenu.Item>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 	{:else}
 		<!-- Placeholder when user data is not yet available -->
 		<div class="flex items-center gap-4 animate-pulse">

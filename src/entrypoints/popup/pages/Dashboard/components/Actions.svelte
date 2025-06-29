@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { todoistProjects } from '$lib/stores/app';
+	import { type WorkspaceProject, type PersonalProject } from '@doist/todoist-api-typescript';
 	import { Import } from 'lucide-svelte';
 
-	$: projectCount = $todoistProjects?.data?.length ?? 0;
+	const { projects }: { projects: (PersonalProject | WorkspaceProject)[] } = $props();
+	let projectCount = $derived(projects.length);
+
 	// This will be replaced with actual selection logic later
-	let hasSelection = projectCount > 0;
+	let hasSelection = $derived(projectCount > 0);
 </script>
 
 <div class="flex justify-between items-start">

@@ -9,8 +9,10 @@
 		TableRow,
 	} from "$lib/components/ui/table";
 	import { Plus, Trash } from "lucide-svelte";
-	import TodoistItem from "../../../components/TodoistItem.svelte";
-	import type { PersonalProject, WorkspaceProject } from "@doist/todoist-api-typescript";
+	import type {
+		PersonalProject,
+		WorkspaceProject,
+	} from "@doist/todoist-api-typescript";
 
 	export let projects: (PersonalProject | WorkspaceProject)[] = [];
 </script>
@@ -20,7 +22,9 @@
 		<Table>
 			<TableHeader>
 				<TableRow>
-					<TableHead class="px-2 text-sm">Projects ({projects.length}/5)</TableHead>
+					<TableHead class="px-2 text-sm text-muted-foreground"
+						>Projects ({projects.length}/5)</TableHead
+					>
 					<TableHead class="w-16 text-center"></TableHead>
 				</TableRow>
 			</TableHeader>
@@ -46,13 +50,15 @@
 					<div
 						class="w-full h-full flex items-center justify-center text-sm text-muted-foreground text-center p-4"
 					>
-						No projects found. <br />Try refetching or create one.
+						No projects found.
 					</div>
 				{/if}
 			</TableBody>
 		</Table>
 	</div>
-	<div class="absolute bottom-0 w-full p-2 bg-background/10 backdrop-blur-xs h-11">
+	<div
+		class="absolute bottom-0 w-full p-2 bg-background/10 backdrop-blur-xs h-11"
+	>
 		<Button size="sm" variant="secondary" class="w-full justify-center">
 			<Plus class="size-4" />
 			Add a Project

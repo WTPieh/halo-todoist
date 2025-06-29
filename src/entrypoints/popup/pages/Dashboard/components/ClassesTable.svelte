@@ -19,7 +19,7 @@
 			<TableHeader>
 				<TableRow>
 					<TableHead class="w-8 px-2"><Checkbox /></TableHead>
-					<TableHead class="px-2">Classes ({classes.length})</TableHead>
+					<TableHead class="px-2 text-muted-foreground text-sm">Classes ({classes.length})</TableHead>
 				</TableRow>
 			</TableHeader>
 		</Table>

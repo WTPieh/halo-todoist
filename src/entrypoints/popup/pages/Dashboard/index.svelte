@@ -16,6 +16,13 @@
   import Container from "../../components/shared/Container.svelte";
   import Footer from "../../components/shared/Footer.svelte";
 
+  let searchTerm = "";
+
+  $: allProjects = $todoistProjects?.data || [];
+  $: filteredProjects = allProjects.filter((project) =>
+    project.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const handleRefetch = async () => {
     try {
       const response = await browser.runtime.sendMessage({
@@ -41,7 +48,7 @@
 {#if $isAppInitialized}
   <Container>
     <div class="mx-5 mt-5 pb-2">
-      <Header />
+      <Header onLogout={handleLogout} />
     </div>
     <div class="border-b border-border">
     </div>
@@ -49,16 +56,16 @@
       <div class="flex flex-col gap-1">
         <InfoBar />
         <div class="flex flex-col gap-2">
-          <Controls onRefetch={handleRefetch} onLogout={handleLogout} />
+          <Controls bind:searchTerm onRefetch={handleRefetch} onLogout={handleLogout} />
           <div
-            class="rounded-lg border flex-grow flex max-h-[259px] overflow-hidden"
+            class="rounded-lg border flex-grow flex min-h-[259px] max-h-[259px] overflow-hidden h-full"
           >
             <ClassesTable />
-            <ProjectsTable projects={$todoistProjects?.data || []} />
+            <ProjectsTable projects={filteredProjects} />
           </div>
         </div>
       </div>
-      <Actions />
+      <Actions projects={filteredProjects} />
     </main>
     <Footer />
   </Container>
