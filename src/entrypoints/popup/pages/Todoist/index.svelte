@@ -27,12 +27,13 @@
         throw new Error(response.error);
       }
       toast.success("Successfully authenticated with Todoist!");
-      appStore.setAppState(AppState.DASHBOARD);
+      appStore.setAppState(AppState.TODOIST_SUCCESS);
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : "An unknown error occurred.";
       error.set(errorMessage);
       toast.error(`Authentication Failed: ${errorMessage}`);
+      appStore.setAppState(AppState.TODOIST_ERROR);
     } finally {
       isLoading.set(false);
     }

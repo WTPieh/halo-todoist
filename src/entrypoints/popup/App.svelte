@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ModeWatcher } from "mode-watcher";
   import { Toaster } from "$lib/components/ui/sonner";
   import { appState, isAppInitialized } from "$lib/stores/app";
   import { AppState } from "$lib/stores/path";
@@ -13,6 +14,7 @@
   import { fade } from "svelte/transition";
 </script>
 
+<ModeWatcher />
 <Toaster />
 <main class="w-full h-full bg-background text-foreground relative">
   {#if $isAppInitialized}

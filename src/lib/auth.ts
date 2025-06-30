@@ -15,6 +15,7 @@ export const handleTodoistAuth = async (): Promise<void> => {
     const state = Math.random().toString(36).substring(2);
     const extensionId = browser.runtime.id;
     const authUrl = new URL("halo-todoist/us-central1/auth", firebaseAuthUrl);
+    console.log(authUrl);
     authUrl.searchParams.append("state", state);
     authUrl.searchParams.append("extension_id", extensionId);
 

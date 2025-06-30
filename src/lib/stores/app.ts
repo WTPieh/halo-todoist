@@ -4,8 +4,10 @@ import { persistent } from "./persistent";
 import type { BackgroundState } from "@/shared/types";
 
 // 1. Create the persistent stores and capture their initialization flags.
-const { store: backgroundStateStore, isInitialized: isBackgroundStateInitialized } =
-  persistent<BackgroundState | null>("local:background-state", null);
+const {
+  store: backgroundStateStore,
+  isInitialized: isBackgroundStateInitialized,
+} = persistent<BackgroundState | null>("local:background-state", null);
 
 const { store: appStateStore, isInitialized: isAppStateInitialized } =
   persistent<AppState>("local:haloist_page", AppState.LANDING);
@@ -15,7 +17,11 @@ const { store: acceptedTermsStore, isInitialized: isAcceptedTermsInitialized } =
 
 // A single store to signal when all primary UI stores are ready.
 export const isAppInitialized = derived(
-  [isBackgroundStateInitialized, isAppStateInitialized, isAcceptedTermsInitialized],
+  [
+    isBackgroundStateInitialized,
+    isAppStateInitialized,
+    isAcceptedTermsInitialized,
+  ],
   ($values) => $values.every(Boolean)
 );
 
@@ -66,6 +72,10 @@ function createActions() {
       acceptedTermsStore.set(false);
     },
     setAppState: (newState: AppState) => {
+      if (newState === AppState.TODOIST_AUTH)
+        if (get(backgroundStateStore)?.todoistToken) {
+          appStateStore.set(AppState.TODOIST_SUCCESS);
+        }
       appStateStore.set(newState);
     },
     setAcceptedTerms: () => {

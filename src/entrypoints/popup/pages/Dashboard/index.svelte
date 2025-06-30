@@ -17,6 +17,8 @@
   import Footer from "../../components/shared/Footer.svelte";
 
   let searchTerm = "";
+  let selectedProjectId: string | null = null;
+  let selectedClasses: string[] = [];
 
   $: allProjects = $todoistProjects?.data || [];
   $: filteredProjects = allProjects.filter((project) =>
@@ -56,16 +58,20 @@
       <div class="flex flex-col gap-1">
         <InfoBar />
         <div class="flex flex-col gap-2">
-          <Controls bind:searchTerm onRefetch={handleRefetch} onLogout={handleLogout} />
+          <Controls bind:searchTerm onRefetch={handleRefetch} />
           <div
             class="rounded-lg border flex-grow flex min-h-[259px] max-h-[259px] overflow-hidden h-full"
           >
-            <ClassesTable />
-            <ProjectsTable projects={filteredProjects} />
+            <ClassesTable bind:checkedValues={selectedClasses} />
+            <ProjectsTable projects={filteredProjects} bind:selectedProjectId />
           </div>
         </div>
       </div>
-      <Actions projects={filteredProjects} />
+      <Actions
+        projects={filteredProjects}
+        {selectedClasses}
+        {selectedProjectId}
+      />
     </main>
     <Footer />
   </Container>

@@ -7,7 +7,7 @@ export default defineConfig({
   srcDir: "src",
   modules: ["@wxt-dev/module-svelte"],
   webExt: {
-    chromiumArgs: ["--user-data-dir=./.wxt/test"],
+    chromiumArgs: ["--user-data-dir=./.wxt/test2"],
   },
   manifest: {
     browser_action: {

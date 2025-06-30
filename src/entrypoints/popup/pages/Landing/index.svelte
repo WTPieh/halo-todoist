@@ -14,7 +14,7 @@
 </script>
 
 <Container>
-  <Content class="h-full">
+  <Content>
     <div class="flex flex-col items-center justify-center space-y-4">
       <h1 class="text-2xl font-bold">Welcome to</h1>
       <div class="flex flex-col items-center justify-center space-y-2">

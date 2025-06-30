@@ -3,13 +3,21 @@
 	import { type WorkspaceProject, type PersonalProject } from '@doist/todoist-api-typescript';
 	import { Import } from 'lucide-svelte';
 
-	const { projects }: { projects: (PersonalProject | WorkspaceProject)[] } = $props();
-	let projectCount = $derived(projects.length);
+	const {
+		projects,
+		selectedClasses,
+		selectedProjectId,
+	}: {
+		projects: (PersonalProject | WorkspaceProject)[];
+		selectedClasses: string[];
+		selectedProjectId: string | null;
+	} = $props();
 
-	// This will be replaced with actual selection logic later
-	let hasSelection = $derived(projectCount > 0);
+	let projectCount = $derived(projects.length);
+	let hasSelection = $derived(selectedClasses.length > 0 && selectedProjectId !== null);
 </script>
 
+<div class="flex flex-col gap-3">
 <div class="flex justify-between items-start">
 	<p class="text-sm text-muted-foreground">Displaying results for {projectCount} projects</p>
 	<div class="flex gap-2">
@@ -24,3 +32,5 @@
 		Must select at least one class and confirm a project
 	</p>
 {/if} 
+
+</div>

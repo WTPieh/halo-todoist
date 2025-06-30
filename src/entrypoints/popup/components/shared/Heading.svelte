@@ -1,5 +1,6 @@
 <script lang="ts">
-  let { title, description, subtitle}: { title: string, description: string, subtitle?: string } = $props();
+  import clsx from "clsx";
+  let { title, description, subtitle, descriptionClass}: { title: string, description: string, subtitle?: string, descriptionClass?: string } = $props();
 </script>
 
 <div class="flex flex-col gap-4">
@@ -7,5 +8,5 @@
 {#if subtitle}
   <p class="text-sm text-muted-foreground text-center leading-none">{subtitle}</p>
 {/if}
-<p class="text-center">{description}</p>
+<p class={clsx("text-center", descriptionClass)}>{description}</p>
 </div>

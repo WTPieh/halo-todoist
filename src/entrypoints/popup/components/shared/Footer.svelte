@@ -3,6 +3,7 @@
     import Button from '@/lib/components/ui/button/button.svelte';
     import { HandHeart } from '@lucide/svelte';
     import github from '@/assets/github-icon.svg';
+    import discord from "@/assets/discord-icon.svg";
 
     const legalLinks = [
         { href: 'https://piehsoft.com/privacy', text: 'Privacy Policy' },
@@ -25,9 +26,14 @@
         {/each}
       </li>
       <li class="flex flex-col items-center gap-2">
+        <div class="flex flex-col gap-2">
         <a href="https://github.com/WTPieh/halo-todoist-extension" target="_blank">
           <img src={github} alt="GitHub" class="size-4" />
         </a>
+        <a href="https://discord.com" target="_blank">
+          <img src={discord} alt="Discord" class="size-4" />
+        </a>
+        </div>
       </li>
       <li class="flex flex-col items-center gap-2">
         <p class="leading-none text-xs text-muted-foreground text-center">Having trouble?</p>

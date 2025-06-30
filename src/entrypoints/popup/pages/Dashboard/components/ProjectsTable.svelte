@@ -13,8 +13,14 @@
 		PersonalProject,
 		WorkspaceProject,
 	} from "@doist/todoist-api-typescript";
+	import { cn } from "$lib/utils";
 
 	export let projects: (PersonalProject | WorkspaceProject)[] = [];
+	export let selectedProjectId: string | null = null;
+
+	function handleSelectProject(projectId: string) {
+		selectedProjectId = selectedProjectId === projectId ? null : projectId;
+	}
 </script>
 
 <div class="w-1/2 border-l flex flex-col h-full">
@@ -35,17 +41,35 @@
 			<TableBody>
 				{#if projects.length > 0}
 					{#each projects as project}
-						<TableRow>
+						<TableRow
+							class={cn(
+								"cursor-pointer",
+								selectedProjectId === project.id && "bg-primary/50 hover:bg-muted"
+							)}
+							onclick={() => handleSelectProject(project.id)}
+							onkeydown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									e.preventDefault();
+									handleSelectProject(project.id);
+								}
+							}}
+							tabindex={0}
+						>
 							<TableCell class="px-2 h-[44px] py-0">
 								<p class="text-sm leading-tight">{project.name}</p>
 							</TableCell>
-							<TableCell class="w-16 h-[44px] py-0 text-center">
-								<Button variant="ghost" size="icon">
-									<Trash />
-								</Button>
-							</TableCell>
-						</TableRow>
-					{/each}
+						<TableCell class="w-16 h-[44px] py-0 text-center">
+								<Button
+									variant="ghost"
+									size="icon"
+									class="hover:bg-destructive/20 hover:text-destructive"
+									onclick={(event) => event.stopPropagation()}
+								>
+								<Trash />
+							</Button>
+						</TableCell>
+					</TableRow>
+				{/each}
 				{:else}
 					<div
 						class="w-full h-full flex items-center justify-center text-sm text-muted-foreground text-center p-4"
