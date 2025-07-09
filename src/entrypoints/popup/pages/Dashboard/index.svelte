@@ -15,12 +15,14 @@
   import { toast } from "svelte-sonner";
   import Container from "../../components/shared/Container.svelte";
   import Footer from "../../components/shared/Footer.svelte";
-  import Modal from "./Modal/index.svelte";
+  import Modal from "./Customize View/index.svelte";
+  import AddProject from "./Add Project/index.svelte";
 
   let searchTerm = $state("");
   let selectedProjectId: string | null = $state(null);
   let selectedClasses: string[] = $state([]);
   let isModalOpen = $state(false);
+  let isAddProjectOpen = $state(false);
   const onClose = () => 
     isModalOpen = false;
   const onCustomizeClick = () => isModalOpen = true;
@@ -50,10 +52,15 @@
     appStore.setAppState(AppState.LANDING);
     browser.runtime.sendMessage({ type: "logout" });
   };
+
+  const handleCreateProject = async (data: { name: string }) => {
+    console.log(data);
+  };
 </script>
 
 {#if $isAppInitialized}
   <Modal isOpen={isModalOpen} {onClose} />
+  <AddProject isOpen={isAddProjectOpen} onClose={() => isAddProjectOpen = false} onCreate={handleCreateProject} projectCount={filteredProjects.length} maxProjects={5}/>
   <Container>
     <div class="mx-5 mt-5 pb-2">
       <Header onLogout={handleLogout} />
@@ -69,7 +76,7 @@
             class="rounded-lg border flex-grow flex min-h-[259px] max-h-[259px] overflow-hidden h-full"
           >
             <ClassesTable bind:checkedValues={selectedClasses} />
-            <ProjectsTable projects={filteredProjects} bind:selectedProjectId />
+            <ProjectsTable projects={filteredProjects} bind:selectedProjectId onAddProject={() => isAddProjectOpen = true}/>
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@
 
 	export let projects: (PersonalProject | WorkspaceProject)[] = [];
 	export let selectedProjectId: string | null = null;
+	export let onAddProject: () => void = () => {};
 
 	function handleSelectProject(projectId: string) {
 		selectedProjectId = selectedProjectId === projectId ? null : projectId;
@@ -81,7 +82,7 @@
 		</Table>
 	</div>
 	<div class="p-2 border-t">
-		<Button size="sm" variant="secondary" class="w-full justify-center">
+		<Button size="sm" variant="secondary" class="w-full justify-center" onclick={onAddProject}>
 			<Plus class="size-4" />
 			Add a Project
 		</Button>

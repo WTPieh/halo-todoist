@@ -53,14 +53,22 @@
 			window.removeEventListener('resize', updateScrollState);
 		};
 	});
+
+	const handleKeyDown = (event: KeyboardEvent) => {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault();
+			const target = event.currentTarget as HTMLInputElement;
+			target.click();
+		}
+	};
 </script>
 
 <div class="px-1 h-fit w-full overflow-hidden">
 	{@render label(title, checked)}
-	<div class="ml-6">
+	<div class="ml-5.5">
 		<div
 			bind:this={containerEl}
-			class="tags-container flex w-full gap-2 overflow-x-auto overflow-y-visible pr-2 py-0.5"
+			class="tags-container flex w-full gap-2 overflow-x-auto overflow-y-visible pl-1 pr-2 py-0.5"
 			class:fade-right={scrollState === 'start' || scrollState === 'middle'}
 			class:fade-left={scrollState === 'end' || scrollState === 'middle'}
 		>
@@ -69,7 +77,7 @@
 					role="button"
 					tabindex="0"
 					aria-label={tag}
-					class="group flex w-fit shrink-0 items-center gap-1 rounded-md border bg-background px-2.5 py-1 text-sm text-nowrap transition-all scroll-m-2 focus-within:bg-card focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-0 focus-within:ring-offset-popover focus:outline-none"
+					class="group flex w-fit shrink-0 items-center gap-1 rounded-md border bg-background px-2.5 py-1 text-sm text-nowrap transition-all scroll-m-2 focus-within:bg-card focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-0 focus-within:ring-offset-popover focus:outline-none hover:bg-card"
 					onfocus={handleFocus}
 				>
 					<Hash class="h-3 w-3 text-muted-foreground" />
@@ -88,7 +96,7 @@
 
 {#snippet label(title: string, isChecked: boolean)}
 	<div class="flex items-center gap-2">
-		<Checkbox id={title} checked={isChecked} />
+		<Checkbox id={title} checked={isChecked} onkeydown={handleKeyDown} />
 		<label for={title} class="font-medium">{title}</label>
 	</div>
 {/snippet}
