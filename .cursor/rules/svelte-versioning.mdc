@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+We are using svelte 5 for this project, so you should make sure to always refer to svelte 5 best practices.
+
+We are not implementing SvelteKit in here, which means we are going through a more declarative state management.
+
+Always provide modern and up to date information only on Svelte 5 modern practices and avoid Svelte 4 references, unless asked.

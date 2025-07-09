@@ -15,15 +15,20 @@
   import { toast } from "svelte-sonner";
   import Container from "../../components/shared/Container.svelte";
   import Footer from "../../components/shared/Footer.svelte";
+  import Modal from "./Modal/index.svelte";
 
-  let searchTerm = "";
-  let selectedProjectId: string | null = null;
-  let selectedClasses: string[] = [];
+  let searchTerm = $state("");
+  let selectedProjectId: string | null = $state(null);
+  let selectedClasses: string[] = $state([]);
+  let isModalOpen = $state(false);
+  const onClose = () => 
+    isModalOpen = false;
+  const onCustomizeClick = () => isModalOpen = true;
 
-  $: allProjects = $todoistProjects?.data || [];
-  $: filteredProjects = allProjects.filter((project) =>
+  let allProjects = $derived($todoistProjects?.data || []);
+  let filteredProjects = $derived(allProjects.filter((project) =>
     project.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ));
 
   const handleRefetch = async () => {
     try {
@@ -48,6 +53,7 @@
 </script>
 
 {#if $isAppInitialized}
+  <Modal isOpen={isModalOpen} {onClose} />
   <Container>
     <div class="mx-5 mt-5 pb-2">
       <Header onLogout={handleLogout} />
@@ -71,6 +77,7 @@
         projects={filteredProjects}
         {selectedClasses}
         {selectedProjectId}
+        {onCustomizeClick}
       />
     </main>
     <Footer />

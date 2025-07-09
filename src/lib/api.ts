@@ -1,5 +1,7 @@
 import { storage } from '#imports';
-import { GetProjectsResponse, PersonalProject, WorkspaceProject } from '@doist/todoist-api-typescript';
+import { GetProjectsResponse, PersonalProject, WorkspaceProject, TodoistApi } from '@doist/todoist-api-typescript';
+
+
 
 // Based on the Todoist REST API v1 documentation for a project object.
 export interface Project {
@@ -41,16 +43,10 @@ const unwrapTodoistResponse = async <T>(response: Response): Promise<T> => {
  * @param {string} token The user's Todoist authentication token.
  */
 export const getProjects = async (token: string): Promise<(PersonalProject | WorkspaceProject)[]> => {
-	const headers = getAuthHeaders(token);
-	const response = await fetch("https://api.todoist.com/api/v1/projects", {
-		headers,
-	});
+	const api = new TodoistApi(token);
+	const projects = await api.getProjects();
 
-	if (!response.ok) {
-		throw new Error(`Failed to fetch projects: ${response.statusText}`);
-	}
-
-	return unwrapTodoistResponse<(PersonalProject | WorkspaceProject)[]>(response);
+	return projects.results;
 };
 
 /**

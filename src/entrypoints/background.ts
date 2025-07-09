@@ -131,7 +131,7 @@ export default defineBackground(() => {
 
       // --- Todoist Project Fetching (called from Dashboard Refresh) ---
       case "refetch-todoist-projects":
-        (async () => {
+      (async () => {
           let state = await getState();
           state.todoistProjects.status = "loading";
           await setState(state);
@@ -162,8 +162,8 @@ export default defineBackground(() => {
               error: state.todoistProjects.error,
             });
           }
-        })();
-        return true;
+      })();
+      return true;
 
       default:
         console.warn("Unknown message type received:", message.type);
