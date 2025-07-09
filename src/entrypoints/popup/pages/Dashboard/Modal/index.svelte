@@ -134,7 +134,7 @@
 			onkeydown={handleKeydown}
 		>
 			<button
-				class="absolute right-4 top-4 rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
+				class="absolute right-4 top-4 rounded-sm p-1 text-muted-foreground transition-all hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-popover"
 				onclick={handleClose}
 				aria-label="Close"
 			>

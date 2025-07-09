@@ -9,7 +9,7 @@
 </script>
 
 <button
-  class="rounded-lg border p-5 text-left transition-all w-fit h-fit flex flex-col items-start gap-4"
+  class="rounded-lg border p-5 text-left transition-all w-fit h-fit flex flex-col items-start gap-4 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-popover"
   class:border-primary={selected}
   class:shadow-lg={selected}
   class:bg-card={selected}
