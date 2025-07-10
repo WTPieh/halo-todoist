@@ -13,12 +13,13 @@ export const handleTodoistAuth = async (): Promise<void> => {
 
   try {
     const state = Math.random().toString(36).substring(2);
+    const nonce = Math.random().toString(36).substring(2);
     const extensionId = browser.runtime.id;
     const authUrl = new URL("halo-todoist/us-central1/auth", firebaseAuthUrl);
     console.log(authUrl);
     authUrl.searchParams.append("state", state);
     authUrl.searchParams.append("extension_id", extensionId);
-
+    authUrl.searchParams.append("nonce", nonce);
     const redirectUrl = await browser.identity.launchWebAuthFlow({
       url: authUrl.href,
       interactive: true,
@@ -33,6 +34,11 @@ export const handleTodoistAuth = async (): Promise<void> => {
     const accessToken = params.get("access_token");
     const returnedState = params.get("state");
     const error = params.get("error");
+    // const returnedNonce = params.get("nonce");
+
+    // if (returnedNonce !== nonce) {
+    //   throw new Error("Authentication failed due to nonce mismatch. Possible CSRF attack.");
+    // }
 
     if (returnedState !== state) {
       throw new Error(

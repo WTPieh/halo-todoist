@@ -53,7 +53,7 @@
               <DropdownMenu.Item
                 onclick={() =>
                   window.open(
-                    "https://github.com/w-pieh/halo-todoist-extension/issues",
+                    "https://github.com/w-pieh/halo-todoist.git/issues",
                     "_blank"
                   )}
               >

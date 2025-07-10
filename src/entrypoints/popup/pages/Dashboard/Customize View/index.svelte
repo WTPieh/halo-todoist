@@ -56,7 +56,7 @@
 		}
 	];
 
-	let dialogElement: HTMLDivElement;
+	let dialogElement: HTMLDivElement | null = $state(null);
 
 	const handleClose = () => {
 		onClose();
