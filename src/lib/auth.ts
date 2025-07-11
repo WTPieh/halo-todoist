@@ -2,7 +2,7 @@
  * Initiates the Todoist OAuth2 flow and securely stores the access token
  * by updating the main background state.
  */
-export const handleTodoistAuth = async (): Promise<void> => {
+export const handleTodoistAuth = async (): Promise<string> => {
   const firebaseAuthUrl = import.meta.env.VITE_FIREBASE_AUTH_URL;
 
   if (!firebaseAuthUrl) {
@@ -55,14 +55,9 @@ export const handleTodoistAuth = async (): Promise<void> => {
     }
 
     // Success! Read the current state, add the token, and write it back.
-    const currentState = (await storage.getItem("local:background-state")) || {};
-    const newState = {
-      ...currentState,
-      todoistToken: accessToken,
-    };
-    await storage.setItem("local:background-state", newState);
 
-    console.log("Todoist authentication successful. Token stored in background state.");
+    console.log("Todoist authentication successful. Returning token to background state.");
+    return accessToken;
   } catch (error) {
     console.error(
       "Error during Todoist authentication:",

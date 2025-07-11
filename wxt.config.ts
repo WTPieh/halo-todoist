@@ -14,7 +14,7 @@ export default defineConfig({
       default_popup: "popup.html",
       default_title: "Haloist",
     },
-    host_permissions: ["https://app.todoist.com/*", "https://halo.gcu.edu/*"],
+    host_permissions: ["https://app.todoist.com/*", "https://halo.gcu.edu/*", "https://api.todoist.com/*"],
     permissions: ["identity", "storage", "cookies"],
   },
   vite: (env) => {

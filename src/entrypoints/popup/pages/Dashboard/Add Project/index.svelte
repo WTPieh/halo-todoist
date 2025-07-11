@@ -5,6 +5,7 @@
   import { X, Plus, Loader2 } from "lucide-svelte";
   import { sineIn } from "svelte/easing";
   import { fly } from "svelte/transition";
+  import { appState, backgroundState } from "@/lib/stores/app";
 
   let {
     onCreate,
@@ -63,6 +64,7 @@
       }
     }
   };
+
 </script>
 
 {#if isOpen}

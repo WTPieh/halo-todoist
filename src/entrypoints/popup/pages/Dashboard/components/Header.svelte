@@ -51,15 +51,15 @@
             </DropdownMenu.Trigger>
             <DropdownMenu.Content side="bottom" align="end">
               <DropdownMenu.Item
-                onclick={() =>
+                onSelect={() =>
                   window.open(
-                    "https://github.com/w-pieh/halo-todoist.git/issues",
+                    "https://github.com/WTPieh/halo-todoist/issues",
                     "_blank"
                   )}
               >
                 Report Issue
               </DropdownMenu.Item>
-              <Separator />
+              <DropdownMenu.Separator />
               <DropdownMenu.Item onclick={onLogout}>Logout</DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

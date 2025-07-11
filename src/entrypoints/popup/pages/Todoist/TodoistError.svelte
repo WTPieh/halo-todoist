@@ -8,36 +8,37 @@
   import Content from "../../components/shared/Content.svelte";
   import errorImage from "@/assets/error.png";
   import { AppState } from "$lib/stores/path";
-  import { appState } from "$lib/stores/app";
+  import { appState, todoistToken as t } from "$lib/stores/app";
   import { writable } from "svelte/store";
   import { toast } from "svelte-sonner";
+  import { BackgroundMessage } from "@/shared/background-types";
   //   import { appStore } from '$lib/stores/app';
   //   import { AppState } from '@/lib/stores/path';
 
   const isLoading = writable(false);
   const error = writable<string | null>(null);
-
   const handleTryAgain = async () => {
     isLoading.set(true);
     error.set(null);
-    try {
-      const response = await browser.runtime.sendMessage({
-        type: "todoist-auth",
-      });
-      if (response?.error) {
-        throw new Error(response.error);
-      }
-      toast.success("Successfully authenticated with Todoist!");
-      appState.set(AppState.TODOIST_SUCCESS);
-    } catch (e) {
-      const errorMessage =
-        e instanceof Error ? e.message : "An unknown error occurred.";
-      error.set(errorMessage);
-      toast.error(`Authentication Failed: ${errorMessage}`);
-    } finally {
-      isLoading.set(false);
-    }
+    await browser.runtime.sendMessage({
+      type: BackgroundMessage.TODOIST_AUTH,
+    });
   };
+
+  $effect(() => {
+    console.log("here")
+    switch ($t?.status) {
+      case "error":
+        isLoading.set(false);
+        toast.error($t.error ?? "There was an unrecognized error.");
+        break;
+      case "success":
+        isLoading.set(false);
+        toast.success("Successfully authenticated with Todoist!");
+        appState.set(AppState.TODOIST_SUCCESS);
+        break;
+    }
+  });
 </script>
 
 <section>

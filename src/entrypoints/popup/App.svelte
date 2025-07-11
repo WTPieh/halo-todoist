@@ -18,39 +18,27 @@
 <Toaster />
 <main class="w-full h-full bg-background text-foreground relative">
   {#if $isAppInitialized}
-    {#if $appState === AppState.LANDING}
-      <div transition:fade class="absolute w-full h-full">
-        <Landing />
+    {#key $appState}
+      <div transition:fade={{ duration: 200 }} class="absolute w-full h-full">
+        {#if $appState === AppState.LANDING}
+          <Landing />
+        {:else if $appState === AppState.INTRODUCTION}
+          <Introduction />
+        {:else if $appState === AppState.AGREEMENT}
+          <Agreement />
+        {:else if $appState === AppState.DASHBOARD}
+          <Dashboard />
+        {:else if $appState === AppState.HALO_AUTH}
+          <Halo />
+        {:else if $appState === AppState.TODOIST_AUTH}
+          <Todoist />
+        {:else if $appState === AppState.TODOIST_ERROR}
+          <TodoistError />
+        {:else if $appState === AppState.TODOIST_SUCCESS}
+          <TodoistSuccess />
+        {/if}
       </div>
-    {:else if $appState === AppState.INTRODUCTION}
-      <div transition:fade class="absolute w-full h-full">
-        <Introduction />
-      </div>
-    {:else if $appState === AppState.AGREEMENT}
-      <div transition:fade class="absolute w-full h-full">
-        <Agreement />
-      </div>
-    {:else if $appState === AppState.DASHBOARD}
-      <div transition:fade class="absolute w-full h-full">
-        <Dashboard />
-      </div>
-    {:else if $appState === AppState.HALO_AUTH}
-      <div transition:fade class="absolute w-full h-full">
-        <Halo />
-      </div>
-    {:else if $appState === AppState.TODOIST_AUTH}
-      <div transition:fade class="absolute w-full h-full">
-        <Todoist />
-      </div>
-    {:else if $appState === AppState.TODOIST_ERROR}
-      <div transition:fade class="absolute w-full h-full">
-        <TodoistError />
-      </div>
-    {:else if $appState === AppState.TODOIST_SUCCESS}
-      <div transition:fade class="absolute w-full h-full">
-        <TodoistSuccess />
-      </div>
-    {/if}
+    {/key}
   {:else}
     <!-- You can add a loading spinner here if you want -->
     <div class="w-full h-full flex items-center justify-center">

@@ -1,7 +1,7 @@
 // Forum notification types based on API response from gateway POST
 // Source: user-provided sample
 
-import { Project } from "@/lib/api";
+import { Project, UserPlan } from "@/lib/api";
 import { PersonalProject, WorkspaceProject } from "@doist/todoist-api-typescript";
 
 export type ForumsGQL = {
@@ -254,5 +254,6 @@ export type BackgroundState = {
   haloSession: StateSlice<HaloInfo>;
   haloUser: StateSlice<UserOverview>;
   todoistProjects: StateSlice<(PersonalProject | WorkspaceProject)[]>; // Using any[] for now for projects
-  todoistToken: string | null;
+  todoistToken: StateSlice<string>;
+  todoistUserPlan: StateSlice<UserPlan>;
 };

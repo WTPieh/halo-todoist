@@ -2,6 +2,7 @@ import { derived, get, readable } from "svelte/store";
 import { AppState } from "./path";
 import { persistent } from "./persistent";
 import type { BackgroundState } from "@/shared/types";
+import { BackgroundMessage } from "@/shared/background-types";
 
 // 1. Create the persistent stores and capture their initialization flags.
 const {
@@ -40,6 +41,10 @@ export const todoistProjects = derived(
   backgroundState,
   ($state) => $state?.todoistProjects
 );
+export const todoistToken = derived(
+  backgroundState,
+  ($state) => $state?.todoistToken
+);
 
 // A derived store for the combined user object, for convenience in the UI.
 export const user = derived(
@@ -61,15 +66,18 @@ export const user = derived(
 function createActions() {
   return {
     fetchHaloSession: () => {
-      browser.runtime.sendMessage({ type: "halo-fetch-session" });
+      browser.runtime.sendMessage({ type: BackgroundMessage.HALO_FETCH_SESSION });
     },
     fetchTodoistProjects: () => {
-      browser.runtime.sendMessage({ type: "todoist-fetch-projects" });
+      browser.runtime.sendMessage({ type: BackgroundMessage.REFETCH_TODOIST_PROJECTS });
     },
     logout: () => {
       backgroundStateStore.set(null);
       appStateStore.set(AppState.LANDING);
       acceptedTermsStore.set(false);
+    },
+    fetchUserPlan: () => {
+      browser.runtime.sendMessage({ type: BackgroundMessage.REFETCH_TODOIST_USER_PLAN });
     },
     setAppState: (newState: AppState) => {
       if (newState === AppState.TODOIST_AUTH)

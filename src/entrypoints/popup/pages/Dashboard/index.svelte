@@ -4,6 +4,7 @@
     haloUser,
     isAppInitialized,
     todoistProjects,
+    backgroundState,
   } from "$lib/stores/app";
   import { AppState } from "$lib/stores/path";
   import Actions from "./components/Actions.svelte";
@@ -23,6 +24,8 @@
   let selectedClasses: string[] = $state([]);
   let isModalOpen = $state(false);
   let isAddProjectOpen = $state(false);
+
+
   const onClose = () => 
     isModalOpen = false;
   const onCustomizeClick = () => isModalOpen = true;
@@ -56,6 +59,7 @@
   const handleCreateProject = async (data: { name: string }) => {
     console.log(data);
   };
+
 </script>
 
 {#if $isAppInitialized}
