@@ -29,10 +29,12 @@
     console.log("here")
     switch ($t?.status) {
       case "error":
+        console.log("inside error");
         isLoading.set(false);
         toast.error($t.error ?? "There was an unrecognized error.");
         break;
       case "success":
+        console.log("inside success")
         isLoading.set(false);
         toast.success("Successfully authenticated with Todoist!");
         appState.set(AppState.TODOIST_SUCCESS);

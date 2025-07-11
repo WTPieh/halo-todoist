@@ -13,28 +13,32 @@
   import { appState, todoistToken as t } from "@/lib/stores/app";
   import { AppState } from "@/lib/stores/path";
 
-  let isLoading = writable(false);
-  let error = writable<string | null>(null);
+  let isLoading = $state(false);
+  let error = $state<string | null>(null);
 
   const handleLogin = async () => {
-    isLoading.set(true);
-    error.set(null);
+    isLoading = true;
+    error = null;
     await browser.runtime.sendMessage({
       type: BackgroundMessage.TODOIST_AUTH,
     });
   };
 
   $effect(() => {
+    console.log($t?.status);
+
 
     switch ($t?.status) {
       case "error":
-        isLoading.set(false);
-        error.set($t.error ?? "There was an unrecognized error.");
+        console.log("inside error");
+        isLoading = false;
+        error = $t.error ?? "There was an unrecognized error.";
         toast.error($t.error ?? "There was an unrecognized error.");
         appState.set(AppState.TODOIST_ERROR);
         break;
       case "success":
-        isLoading.set(false);
+        console.log("inside success");
+        isLoading = false;
         toast.success("Successfully authenticated with Todoist!");
         appState.set(AppState.TODOIST_SUCCESS);
         break;
@@ -50,8 +54,8 @@
     />
     <div class="flex-grow flex flex-col items-center justify-center gap-4">
       <img src={todoistLogo} alt="Todoist Logo" class="size-16" />
-      <Button size="lg" onclick={handleLogin} disabled={$isLoading}>
-        {#if $isLoading}
+      <Button size="lg" onclick={handleLogin} disabled={isLoading}>
+        {#if isLoading}
           <LoaderCircle class="size-4 mr-2 animate-spin" />
           Authenticating...
         {:else}
@@ -63,8 +67,8 @@
         We're requesting the right to view, create and update projects and tasks
         for you.
       </p>
-      {#if $error}
-        <p class="text-sm text-destructive text-center">Error: {$error}</p>
+      {#if error}
+        <p class="text-sm text-destructive text-center">Error: {error}</p>
       {/if}
     </div>
   </Content>

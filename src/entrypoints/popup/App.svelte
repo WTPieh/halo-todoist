@@ -18,7 +18,6 @@
 <Toaster />
 <main class="w-full h-full bg-background text-foreground relative">
   {#if $isAppInitialized}
-    {#key $appState}
       <div transition:fade={{ duration: 200 }} class="absolute w-full h-full">
         {#if $appState === AppState.LANDING}
           <Landing />
@@ -38,7 +37,6 @@
           <TodoistSuccess />
         {/if}
       </div>
-    {/key}
   {:else}
     <!-- You can add a loading spinner here if you want -->
     <div class="w-full h-full flex items-center justify-center">

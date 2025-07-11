@@ -24,63 +24,84 @@
   let selectedClasses: string[] = $state([]);
   let isModalOpen = $state(false);
   let isAddProjectOpen = $state(false);
+  let isRefreshing = $state(false);
 
-
-  const onClose = () => 
-    isModalOpen = false;
-  const onCustomizeClick = () => isModalOpen = true;
+  const onClose = () => (isModalOpen = false);
+  const onCustomizeClick = () => (isModalOpen = true);
 
   let allProjects = $derived($todoistProjects?.data || []);
-  let filteredProjects = $derived(allProjects.filter((project) =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase())
-  ));
+  let filteredProjects = $derived(
+    allProjects.filter((project) =>
+      project.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
-  const handleRefetch = async () => {
-    try {
-      const response = await browser.runtime.sendMessage({
-        type: "refetch-todoist-projects",
-      });
-      if (response?.error) {
-        throw new Error(response.error);
-      }
-      toast.success("Successfully refreshed projects!");
-    } catch (e) {
-      const errorMessage =
-        e instanceof Error ? e.message : "An unknown error occurred.";
-      toast.error(`Refresh Failed: ${errorMessage}`);
-    }
+  const handleRefetch = () => {
+    if (isRefreshing) return;
+    isRefreshing = true;
+    appStore.fetchTodoistProjects();
   };
 
+  $effect(() => {
+    // This effect runs when the refresh status changes
+    console.log("initial");
+
+    console.log($todoistProjects?.status);
+    if (!isRefreshing) return;
+    console.log('made it past');
+
+    console.log($todoistProjects?.status);
+
+    if ($todoistProjects?.status === "success") {
+      console.log("success")
+      toast.success("Successfully refreshed projects.");
+      isRefreshing = false;
+    } else if ($todoistProjects?.status === "error") {
+      console.log("error");
+      const errorMessage =
+        $todoistProjects.error || "An unknown error occurred.";
+      toast.error(`Refresh Failed: ${errorMessage}`);
+      isRefreshing = false;
+    }
+  });
+
   const handleLogout = () => {
-    appStore.setAppState(AppState.LANDING);
     browser.runtime.sendMessage({ type: "logout" });
   };
 
   const handleCreateProject = async (data: { name: string }) => {
     console.log(data);
   };
-
 </script>
 
 {#if $isAppInitialized}
   <Modal isOpen={isModalOpen} {onClose} />
-  <AddProject isOpen={isAddProjectOpen} onClose={() => isAddProjectOpen = false} onCreate={handleCreateProject} projectCount={filteredProjects.length} maxProjects={5}/>
+  <AddProject
+    isOpen={isAddProjectOpen}
+    onClose={() => (isAddProjectOpen = false)}
+    onCreate={handleCreateProject}
+    projectCount={filteredProjects.length}
+    maxProjects={5}
+  />
   <Container>
     <div class="mx-5 mt-5 pb-2">
       <Header onLogout={handleLogout} />
     </div>
-    <div class="border-b border-border">
-    </div>
+    <div class="border-b border-border"></div>
     <main class="flex-grow flex flex-col gap-3 px-5 pb-4 pt-2">
       <div class="flex flex-col gap-1">
         <InfoBar />
         <div class="flex flex-col gap-2">
-          <Controls bind:searchTerm onRefetch={handleRefetch} />
+          <Controls bind:searchTerm onRefetch={handleRefetch} isRefreshing={isRefreshing} />
           <div
             class="rounded-lg border flex-grow flex min-h-[259px] max-h-[259px] overflow-hidden h-full"
           >
             <ClassesTable bind:checkedValues={selectedClasses} />
-            <ProjectsTable projects={filteredProjects} bind:selectedProjectId onAddProject={() => isAddProjectOpen = true}/>
+            <ProjectsTable
+              projects={filteredProjects}
+              bind:selectedProjectId
+              onAddProject={() => (isAddProjectOpen = true)}
+            />
           </div>
         </div>
       </div>

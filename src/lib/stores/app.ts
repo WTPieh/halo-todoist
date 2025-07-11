@@ -69,7 +69,7 @@ function createActions() {
       browser.runtime.sendMessage({ type: BackgroundMessage.HALO_FETCH_SESSION });
     },
     fetchTodoistProjects: () => {
-      browser.runtime.sendMessage({ type: BackgroundMessage.REFETCH_TODOIST_PROJECTS });
+      browser.runtime.sendMessage({ type: BackgroundMessage.TODOIST_FETCH_PROJECTS });
     },
     logout: () => {
       backgroundStateStore.set(null);
@@ -77,13 +77,18 @@ function createActions() {
       acceptedTermsStore.set(false);
     },
     fetchUserPlan: () => {
-      browser.runtime.sendMessage({ type: BackgroundMessage.REFETCH_TODOIST_USER_PLAN });
+      browser.runtime.sendMessage({ type: BackgroundMessage.TODOIST_FETCH_USER_PLAN });
     },
     setAppState: (newState: AppState) => {
-      if (newState === AppState.TODOIST_AUTH)
-        if (get(backgroundStateStore)?.todoistToken) {
+      if (newState === AppState.TODOIST_AUTH) {
+        // If we are trying to go to the auth page, first check if we already have a token.
+        if (get(backgroundStateStore)?.todoistToken?.data) {
+          // If we do, just redirect to the success page and stop.
           appStateStore.set(AppState.TODOIST_SUCCESS);
+          return;
         }
+      }
+      // Otherwise, just set the state as requested.
       appStateStore.set(newState);
     },
     setAcceptedTerms: () => {
